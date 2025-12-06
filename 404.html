@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - 页面未找到</title>
+    <style>
+        /* CSS 样式 */
+        @import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,700');
+        @import url('https://fonts.googleapis.com/css?family=Catamaran:400,800');
+        
+        * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #FDFAF5;
+            margin-bottom: 50px;
+            font-family: 'Montserrat', Helvetica, sans-serif;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin: 30px 15px;
+            font-size: 2.5em;
+            color: #333;
+        }
+        
+        .zoom-area { 
+            max-width: 490px;
+            margin: 30px auto 30px;
+            font-size: 19px;
+            text-align: center;
+            color: #666;
+        }
+        
+        .error-container {
+            text-align: center;
+            font-size: 106px;
+            font-family: 'Catamaran', sans-serif;
+            font-weight: 800;
+            margin: 70px 15px;
+        }
+        
+        .error-container > span {
+            display: inline-block;
+            position: relative;
+        }
+        
+        .error-container > span.four {
+            width: 136px;
+            height: 43px;
+            border-radius: 999px;
+            background:
+                linear-gradient(140deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 43%, transparent 44%, transparent 100%),
+                linear-gradient(105deg, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.06) 41%, rgba(0, 0, 0, 0.07) 76%, transparent 77%, transparent 100%),
+                linear-gradient(to right, #d89ca4, #e27b7e);
+        }
+        
+        .error-container > span.four:before,
+        .error-container > span.four:after {
+            content: '';
+            display: block;
+            position: absolute;
+            border-radius: 999px;
+        }
+        
+        .error-container > span.four:before {
+            width: 43px;
+            height: 156px;
+            left: 60px;
+            bottom: -43px;
+            background:
+                linear-gradient(128deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 40%, transparent 41%, transparent 100%),
+                linear-gradient(116deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.07) 50%, transparent 51%, transparent 100%),
+                linear-gradient(to top, #99749D, #B895AB, #CC9AA6, #D7969E, #E0787F);
+        }
+        
+        .error-container > span.four:after {
+            width: 137px;
+            height: 43px;
+            transform: rotate(-49.5deg);
+            left: -18px;
+            bottom: 36px;
+            background: linear-gradient(to right, #99749D, #B895AB, #CC9AA6, #D7969E, #E0787F);
+        }
+        
+        .error-container > span.zero {
+            vertical-align: text-top;
+            width: 156px;
+            height: 156px;
+            border-radius: 999px;
+            background: linear-gradient(-45deg, transparent 0%, rgba(0, 0, 0, 0.06) 50%,  transparent 51%, transparent 100%),
+                linear-gradient(to top right, #99749D, #99749D, #B895AB, #CC9AA6, #D7969E, #ED8687, #ED8687);
+            overflow: hidden;
+            animation: bgshadow 5s infinite;
+        }
+        
+        .error-container > span.zero:before {
+            content: '';
+            display: block;
+            position: absolute;
+            transform: rotate(45deg);
+            width: 90px;
+            height: 90px;
+            background-color: transparent;
+            left: 0px;
+            bottom: 0px;
+            background:
+                linear-gradient(95deg, transparent 0%, transparent 8%, rgba(0, 0, 0, 0.07) 9%, transparent 50%, transparent 100%),
+                linear-gradient(85deg, transparent 0%, transparent 19%, rgba(0, 0, 0, 0.05) 20%, rgba(0, 0, 0, 0.07) 91%, transparent 92%, transparent 100%);
+        }
+        
+        .error-container > span.zero:after {
+            content: '';
+            display: block;
+            position: absolute;
+            border-radius: 999px;
+            width: 70px;
+            height: 70px;
+            left: 43px;
+            bottom: 43px;
+            background: #FDFAF5;
+            box-shadow: -2px 2px 2px 0px rgba(0, 0, 0, 0.1);
+        }
+        
+        .screen-reader-text {
+            position: absolute;
+            top: -9999em;
+            left: -9999em;
+        }
+        
+        @keyframes bgshadow {
+            0% {
+                box-shadow: inset -160px 160px 0px 5px rgba(0, 0, 0, 0.4);
+            }
+            45% {
+                box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0.1);
+            }
+            55% {
+                box-shadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0.1);
+            }
+            100% {
+                box-shadow: inset 160px -160px 0px 5px rgba(0, 0, 0, 0.4);
+            }
+        }
+        
+        .link-container {
+            text-align: center;
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .link-container a {
+            text-transform: uppercase;
+            font-size: 14px;
+            background-color: #de7e85;
+            padding: 12px 20px;
+            border-radius: 4px;
+            color: #fff;
+            display: inline-block;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.2s;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .link-container a:hover {
+            background-color: #d06a72;
+            transform: translateY(-2px);
+        }
+        
+        .description {
+            max-width: 600px;
+            margin: 30px auto;
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .error-container {
+                font-size: 80px;
+                margin: 50px 15px;
+            }
+            
+            .error-container > span.four {
+                width: 100px;
+                height: 32px;
+            }
+            
+            .error-container > span.four:before {
+                width: 32px;
+                height: 116px;
+                left: 44px;
+                bottom: -32px;
+            }
+            
+            .error-container > span.four:after {
+                width: 102px;
+                height: 32px;
+                left: -13px;
+                bottom: 27px;
+            }
+            
+            .error-container > span.zero {
+                width: 116px;
+                height: 116px;
+            }
+            
+            .error-container > span.zero:after {
+                width: 52px;
+                height: 52px;
+                left: 32px;
+                bottom: 32px;
+            }
+            
+            .zoom-area {
+                font-size: 16px;
+                padding: 0 20px;
+            }
+            
+            .description {
+                font-size: 14px;
+                padding: 0 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .error-container {
+                font-size: 60px;
+            }
+            
+            .error-container > span.four {
+                width: 75px;
+                height: 24px;
+            }
+            
+            .error-container > span.four:before {
+                width: 24px;
+                height: 87px;
+                left: 33px;
+                bottom: -24px;
+            }
+            
+            .error-container > span.four:after {
+                width: 76px;
+                height: 24px;
+                left: -10px;
+                bottom: 20px;
+            }
+            
+            .error-container > span.zero {
+                width: 87px;
+                height: 87px;
+            }
+            
+            .error-container > span.zero:after {
+                width: 39px;
+                height: 39px;
+                left: 24px;
+                bottom: 24px;
+            }
+            
+            .link-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .link-container a {
+                width: 200px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>404 - 页面未找到</h1>
+    <p class="zoom-area">抱歉，您访问的页面不存在或已被移除。</p>
+    
+    <section class="error-container">
+        <span class="four"><span class="screen-reader-text">4</span></span>
+        <span class="zero"><span class="screen-reader-text">0</span></span>
+        <span class="four"><span class="screen-reader-text">4</span></span>
+    </section>
+    
+    <div class="description">
+        <p>您可能遇到了以下情况：</p>
+        <p>• 链接地址输入错误</p>
+        <p>• 页面已被移动或删除</p>
+        <p>• 页面暂时不可用</p>
+    </div>
+    
+    <div class="link-container">
+        <a href="https://zhr-0731.github.io" class="more-link">返回首页</a>
+    </div>
+    
+    <script>
+        // 添加交互效果
+        document.querySelectorAll('.link-container a').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+            });
+            
+            link.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
