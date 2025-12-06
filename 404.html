@@ -7,145 +7,251 @@
     <style>
         /* 基础全屏样式 */
         html, body {
-          height: 100%; /* 关键：确保html和body撑满视口 */
+          height: 100%;
           margin: 0;
           padding: 0;
-          font-family: Roboto, sans-serif;
-          background: #0D0C1E; /* 背景色与页面统一 */
+          font-family: 'Roboto', sans-serif;
+          background: #0D0C1E;
           overflow: hidden;
         }
         ::selection {
           background: #CDD4DE;
         }
 
-        /* 主容器：改为Flexbox实现全屏与居中 */
+        /* 主容器：Flexbox全屏布局 */
         .page {
           display: flex;
-          flex-direction: column; /* 垂直排列 */
-          min-height: 100vh; /* 至少撑满整个视口高度 */
-          position: relative; /* 为内部绝对定位元素提供参照 */
+          flex-direction: column;
+          min-height: 100vh;
+          position: relative;
           z-index: 1;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, .3);
         }
 
         /* 顶部标题区域 */
         header {
-          padding: 30px;
+          padding: 25px 30px;
           color: #CDD4DE;
           font-weight: 300;
           font-size: 14px;
           opacity: 0.7;
-          flex-shrink: 0; /* 防止标题区被压缩 */
+          flex-shrink: 0;
         }
 
-        /* 核心内容区：使用Flexbox居中并控制位置 */
+        /* 核心内容区：居中偏上 */
         .content {
-          flex: 1; /* 占据剩余所有可用空间 */
+          flex: 1;
           display: flex;
           flex-direction: column;
-          align-items: center; /* 水平居中 */
-          justify-content: flex-start; /* 垂直方向从顶部开始 */
-          padding-top: 15vh; /* 关键：通过这个值控制“404”整体内容块的垂直起始位置，可调节 */
+          align-items: center;
+          justify-content: flex-start;
+          padding-top: 18vh; /* 控制整体垂直位置 */
           text-align: center;
           color: #CDD4DE;
-          position: relative; /* 确保内容层级在背景图之上 */
+          position: relative;
           z-index: 2;
         }
+        
         .content h1 {
           font-weight: 900;
-          font-size: 20vw; /* 使用视口单位，使数字大小随屏幕缩放 */
-          line-height: 1;
-          margin: 0 0 5px 0; /* 减少与下方元素的间距 */
+          font-size: 18vw; /* 响应式超大字体 */
+          line-height: 0.85;
+          margin: 0 0 10px 0;
           opacity: 0.6;
         }
+        
         .content h2 {
           font-weight: 700;
-          font-size: 34px;
-          margin-bottom: 6px;
+          font-size: 2.5rem;
+          margin-bottom: 8px;
           opacity: 0.9;
         }
+        
         .content p {
           font-weight: 300;
-          font-size: 14px;
+          font-size: 1rem;
           opacity: 0.7;
-          margin-bottom: 40px; /* 减少与按钮的间距 */
+          margin-bottom: 40px;
+          max-width: 500px;
+          padding: 0 20px;
         }
+        
         .content a {
           display: inline-block;
-          font-weight: 300;
-          font-size: 12px;
+          font-weight: 400;
+          font-size: 0.9rem;
           text-transform: uppercase;
           text-decoration: none;
           color: #CDD4DE;
           border: 1px solid #CDD4DE;
-          padding: 10px 20px; /* 稍微增大按钮内边距 */
+          padding: 12px 28px;
           border-radius: 4px;
-          opacity: 0.6;
+          opacity: 0.7;
           cursor: pointer;
           transition: all 0.3s ease;
+          letter-spacing: 1px;
         }
+        
         .content a:hover {
           opacity: 1;
-          background-color: rgba(205, 212, 222, 0.1);
+          background-color: rgba(205, 212, 222, 0.15);
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* 背景图片样式 - 覆盖全屏 */
+        /* 背景图片：放大并防止溢出 */
         img {
           position: absolute;
           top: 0;
           left: 0;
-          width: 100%;
-          height: 100%; /* 关键：图片高度也设为100% */
-          object-fit: cover; /* 关键：确保图片覆盖整个区域且不变形 */
-          z-index: 1; /* 位于内容之下 */
-          pointer-events: none; /* 防止图片干扰鼠标事件 */
+          width: 120%; /* 关键：放大图片提供缓冲边缘 */
+          height: 120%; /* 关键：放大图片提供缓冲边缘 */
+          object-fit: cover; /* 保持比例覆盖区域 */
+          z-index: 1;
+          pointer-events: none;
+          /* 初始位置调整：将放大的图片中心对齐屏幕中心 */
+          transform: translate(-10%, -10%);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+          .content {
+            padding-top: 15vh;
+          }
+          
+          .content h1 {
+            font-size: 22vw;
+          }
+          
+          .content h2 {
+            font-size: 2rem;
+          }
+          
+          .content p {
+            font-size: 0.9rem;
+            margin-bottom: 35px;
+          }
+          
+          header {
+            padding: 20px;
+            text-align: center;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .content {
+            padding-top: 12vh;
+          }
+          
+          .content h1 {
+            font-size: 25vw;
+          }
+          
+          .content h2 {
+            font-size: 1.8rem;
+          }
+          
+          .content a {
+            padding: 10px 22px;
+            font-size: 0.8rem;
+          }
         }
     </style>
+    <!-- 引入Roboto字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="page">
-      <header>
-        zhr-0731.github.io
-      </header>
-      <div class="content">
-        <h1>404</h1>
-        <h2>页面不存在</h2>
-        <p>我试图捕捉一些迷雾，但我迷失了方向。</p>
-        <a href="https://zhr-0731.github.io">返回首页</a>
-      </div>
-      <!-- 请确保这里的图片地址是你提供的有效URL -->
-      <img src="https://s41.ax1x.com/2025/12/06/pZmymfx.jpg" alt="404背景图" />
+        <header>
+            zhr-0731.github.io
+        </header>
+        
+        <div class="content">
+            <h1>404</h1>
+            <h2>页面不存在</h2>
+            <p>我试图捕捉一些迷雾，但我迷失了方向。</p>
+            <a href="https://zhr-0731.github.io" id="home-button">返回首页</a>
+        </div>
+        
+        <!-- 背景图片 - 使用您提供的URL -->
+        <img src="https://s41.ax1x.com/2025/12/06/pZmymfx.jpg" alt="404背景图" id="bg-image" />
     </div>
 
     <script>
-        // 纯JavaScript重写的鼠标跟随动画
+        // 解决图片黑边问题的鼠标跟随动画
         let lFollowX = 0, lFollowY = 0;
         let x = 0, y = 0;
-        const friction = 1 / 30;
-        const img = document.querySelector('img');
-
-        function animate() {
-          x += (lFollowX - x) * friction;
-          y += (lFollowY - y) * friction;
-
-          const translate = `translate(${x}px, ${y}px)`;
-          img.style.transform = translate;
-
-          window.requestAnimationFrame(animate);
+        const friction = 1 / 28;
+        const img = document.getElementById('bg-image');
+        
+        // 计算图片可安全移动的边界（基于放大后的尺寸）
+        function calculateMovementBounds() {
+            const imgWidth = img.offsetWidth;      // 图片实际宽度（屏幕宽度的120%）
+            const imgHeight = img.offsetHeight;    // 图片实际高度（屏幕高度的120%）
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            
+            // 可移动范围 = (图片尺寸 - 屏幕尺寸) / 2
+            return {
+                maxX: (imgWidth - screenWidth) / 2,
+                maxY: (imgHeight - screenHeight) / 2
+            };
         }
-
+        
+        function animate() {
+            x += (lFollowX - x) * friction;
+            y += (lFollowY - y) * friction;
+            
+            // 获取当前窗口下的移动边界
+            const bounds = calculateMovementBounds();
+            
+            // 将移动坐标限制在计算出的边界内，防止溢出
+            x = Math.max(-bounds.maxX, Math.min(bounds.maxX, x));
+            y = Math.max(-bounds.maxY, Math.min(bounds.maxY, y));
+            
+            // 应用变换：初始偏移(-10%, -10%) + 鼠标移动偏移
+            img.style.transform = `translate(calc(-10% + ${x}px), calc(-10% + ${y}px))`;
+            
+            window.requestAnimationFrame(animate);
+        }
+        
         window.addEventListener('mousemove', function(e) {
-          const windowWidth = window.innerWidth;
-          const windowHeight = window.innerHeight;
-          // 计算鼠标相对视口中心的位置（范围控制在-100到100）
-          let lMouseX = Math.max(-100, Math.min(100, windowWidth / 2 - e.clientX));
-          let lMouseY = Math.max(-100, Math.min(100, windowHeight / 2 - e.clientY));
-
-          lFollowX = (15 * lMouseX) / 100; // 可调节此系数控制跟随幅度
-          lFollowY = (10 * lMouseY) / 100;
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            
+            // 计算鼠标相对于屏幕中心的位置（-1 到 1 之间）
+            const mouseX = (screenWidth / 2 - e.clientX) / (screenWidth / 2);
+            const mouseY = (screenHeight / 2 - e.clientY) / (screenHeight / 2);
+            
+            // 根据边界动态计算最大跟随距离
+            const bounds = calculateMovementBounds();
+            lFollowX = mouseX * bounds.maxX * 0.5; // 系数0.5控制跟随灵敏度
+            lFollowY = mouseY * bounds.maxY * 0.3;
         });
-
+        
+        // 窗口大小改变时，重新计算边界
+        window.addEventListener('resize', function() {
+            const bounds = calculateMovementBounds();
+            // 如果当前位置超出新边界，则拉回边界内
+            x = Math.max(-bounds.maxX, Math.min(bounds.maxX, x));
+            y = Math.max(-bounds.maxY, Math.min(bounds.maxY, y));
+        });
+        
+        // 按钮悬停时暂停动画，提升体验
+        const homeButton = document.getElementById('home-button');
+        homeButton.addEventListener('mouseenter', function() {
+            frictionTemp = friction;
+        });
+        
+        // 启动动画
         window.requestAnimationFrame(animate);
+        
+        // 页面加载后轻微随机初始化，使页面更有生气
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                lFollowX = (Math.random() - 0.5) * 20;
+                lFollowY = (Math.random() - 0.5) * 15;
+            }, 500);
+        });
     </script>
 </body>
 </html>
