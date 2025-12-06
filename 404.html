@@ -5,52 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>页面未找到 - 404</title>
     <style>
+        /* 基础全屏样式 */
         html, body {
-          height: 100%;
-          background: linear-gradient(0, #202239, #8595AC);
+          height: 100%; /* 关键：确保html和body撑满视口 */
           margin: 0;
           padding: 0;
           font-family: Roboto, sans-serif;
+          background: #0D0C1E; /* 背景色与页面统一 */
           overflow: hidden;
         }
         ::selection {
           background: #CDD4DE;
         }
 
+        /* 主容器：改为Flexbox实现全屏与居中 */
         .page {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 800px;
-          height: 600px;
+          display: flex;
+          flex-direction: column; /* 垂直排列 */
+          min-height: 100vh; /* 至少撑满整个视口高度 */
+          position: relative; /* 为内部绝对定位元素提供参照 */
           z-index: 1;
-          background: #0D0C1E;
-          border-radius: 10px;
-          overflow: hidden;
           box-shadow: 0 5px 15px rgba(0, 0, 0, .3);
         }
 
-        /* 简化后的 Header */
+        /* 顶部标题区域 */
         header {
           padding: 30px;
           color: #CDD4DE;
           font-weight: 300;
           font-size: 14px;
           opacity: 0.7;
+          flex-shrink: 0; /* 防止标题区被压缩 */
         }
 
-        /* 内容区域样式 */
+        /* 核心内容区：使用Flexbox居中并控制位置 */
         .content {
+          flex: 1; /* 占据剩余所有可用空间 */
+          display: flex;
+          flex-direction: column;
+          align-items: center; /* 水平居中 */
+          justify-content: flex-start; /* 垂直方向从顶部开始 */
+          padding-top: 15vh; /* 关键：通过这个值控制“404”整体内容块的垂直起始位置，可调节 */
           text-align: center;
-          padding-top: 118px;
           color: #CDD4DE;
+          position: relative; /* 确保内容层级在背景图之上 */
+          z-index: 2;
         }
         .content h1 {
           font-weight: 900;
-          font-size: 165px;
+          font-size: 20vw; /* 使用视口单位，使数字大小随屏幕缩放 */
           line-height: 1;
-          margin-bottom: -10px;
+          margin: 0 0 5px 0; /* 减少与下方元素的间距 */
           opacity: 0.6;
         }
         .content h2 {
@@ -63,7 +68,7 @@
           font-weight: 300;
           font-size: 14px;
           opacity: 0.7;
-          margin-bottom: 140px;
+          margin-bottom: 40px; /* 减少与按钮的间距 */
         }
         .content a {
           display: inline-block;
@@ -73,47 +78,47 @@
           text-decoration: none;
           color: #CDD4DE;
           border: 1px solid #CDD4DE;
-          padding: 8px 14px;
+          padding: 10px 20px; /* 稍微增大按钮内边距 */
           border-radius: 4px;
-          opacity: 0.4;
+          opacity: 0.6;
           cursor: pointer;
-          transition: opacity 0.3s;
+          transition: all 0.3s ease;
         }
         .content a:hover {
-          opacity: 0.8;
+          opacity: 1;
+          background-color: rgba(205, 212, 222, 0.1);
         }
 
-        /* 背景图片样式 */
+        /* 背景图片样式 - 覆盖全屏 */
         img {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
-          height: auto;
-          z-index: -1;
-          transform: scale(1.1);
+          height: 100%; /* 关键：图片高度也设为100% */
+          object-fit: cover; /* 关键：确保图片覆盖整个区域且不变形 */
+          z-index: 1; /* 位于内容之下 */
+          pointer-events: none; /* 防止图片干扰鼠标事件 */
         }
     </style>
 </head>
 <body>
     <div class="page">
       <header>
-        <!-- 简化的标题，可替换为您的站点名 -->
         zhr-0731.github.io
       </header>
       <div class="content">
         <h1>404</h1>
         <h2>页面不存在</h2>
         <p>我试图捕捉一些迷雾，但我迷失了方向。</p>
-        <!-- 已将返回链接指向您的首页 -->
         <a href="https://zhr-0731.github.io">返回首页</a>
       </div>
-        <!-- 图片链接已替换为相对路径示例，请替换为您上传的实际图片路径 -->
-        <img src="https://s41.ax1x.com/2025/12/06/pZmymfx.jpg" alt="404背景图" />
+      <!-- 请确保这里的图片地址是你提供的有效URL -->
+      <img src="https://s41.ax1x.com/2025/12/06/pZmymfx.jpg" alt="404背景图" />
     </div>
 
     <script>
-        // 纯JavaScript重写的鼠标跟随动画，无需jQuery
+        // 纯JavaScript重写的鼠标跟随动画
         let lFollowX = 0, lFollowY = 0;
         let x = 0, y = 0;
         const friction = 1 / 30;
@@ -123,25 +128,23 @@
           x += (lFollowX - x) * friction;
           y += (lFollowY - y) * friction;
 
-          const translate = `translate(${x}px, ${y}px) scale(1.1)`;
+          const translate = `translate(${x}px, ${y}px)`;
           img.style.transform = translate;
 
           window.requestAnimationFrame(animate);
         }
 
         window.addEventListener('mousemove', function(e) {
-          // 计算鼠标相对于视窗中心的位置，并限制范围
           const windowWidth = window.innerWidth;
           const windowHeight = window.innerHeight;
+          // 计算鼠标相对视口中心的位置（范围控制在-100到100）
           let lMouseX = Math.max(-100, Math.min(100, windowWidth / 2 - e.clientX));
           let lMouseY = Math.max(-100, Math.min(100, windowHeight / 2 - e.clientY));
 
-          // 计算图片跟随的偏移量
-          lFollowX = (20 * lMouseX) / 100;
+          lFollowX = (15 * lMouseX) / 100; // 可调节此系数控制跟随幅度
           lFollowY = (10 * lMouseY) / 100;
         });
 
-        // 启动动画循环
         window.requestAnimationFrame(animate);
     </script>
 </body>
