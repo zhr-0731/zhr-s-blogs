@@ -743,9 +743,9 @@
         <section class="carousel-section">
             <h2 class="carousel-section-title">精选文章</h2>
             <div class="carousel-container">
-                <!-- 轮播项目1 -->
+                <!-- 轮播项目1 - 确保链接正确 -->
                 <div class="carousel-slide active" data-index="0">
-                    <a href="https://zhr-0731.github.io/pos.html">
+                    <a href="post.html" id="carousel-link-1">
                         <img class="carousel-image" src="https://images.unsplash.com/photo-1598960087461-556c5a1f864a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200" alt="文章封面1">
                         <div class="carousel-caption">
                             <h3 class="carousel-title">使用GitHub Pages搭建个人博客</h3>
@@ -756,7 +756,7 @@
                 
                 <!-- 轮播项目2 -->
                 <div class="carousel-slide" data-index="1">
-                    <a href="pot2.html">
+                    <a href="post2.html" id="carousel-link-2">
                         <img class="carousel-image" src="https://s41.ax1x.com/2025/12/06/pZmROmT.jpg" alt="文章封面2">
                         <div class="carousel-caption">
                             <h3 class="carousel-title">走出书本，对生活更有体会</h3>
@@ -767,7 +767,7 @@
                 
                 <!-- 轮播项目3 -->
                 <div class="carousel-slide" data-index="2">
-                    <a href="post3.html">
+                    <a href="post3.html" id="carousel-link-3">
                         <img class="carousel-image" src="https://s41.ax1x.com/2025/12/07/pZnFlYF.md.png" alt="文章封面3">
                         <div class="carousel-caption">
                             <h3 class="carousel-title">四季的花</h3>
@@ -991,6 +991,15 @@
                         resetAutoSlide();
                     }
                 });
+                
+                // 确保轮播图链接正常工作
+                const carouselLinks = document.querySelectorAll('.carousel-slide a');
+                carouselLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        console.log('轮播图点击：', this.href);
+                        // 确保链接正常工作
+                    });
+                });
             }
             
             // 更新轮播显示
@@ -1191,8 +1200,19 @@
                     border-radius: 2px;
                     font-weight: 500;
                 }
+                
+                /* 确保轮播图链接可点击 */
+                .carousel-slide a {
+                    cursor: pointer;
+                }
             `;
             document.head.appendChild(style);
+            
+            // 调试：检查轮播图链接
+            console.log('轮播图链接检查:');
+            console.log('链接1:', document.querySelector('#carousel-link-1')?.href);
+            console.log('链接2:', document.querySelector('#carousel-link-2')?.href);
+            console.log('链接3:', document.querySelector('#carousel-link-3')?.href);
         });
     </script>
 </body>
