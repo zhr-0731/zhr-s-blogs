@@ -732,7 +732,7 @@
             <div class="no-results">
                 <div class="no-results-icon">🔍</div>
                 <h3 class="no-results-title">输入关键词搜索文章</h3>
-                <p class="no-results-text">尝试搜索"GitHub"、"博客"、"生活"等关键词</p>
+                <p class="no-results-text">尝试搜索"GitHub"、"博客"、"生活"、"四季"等关键词</p>
             </div>
         </div>
     </div>
@@ -765,6 +765,17 @@
                     </a>
                 </div>
                 
+                <!-- 轮播项目3 -->
+                <div class="carousel-slide" data-index="2">
+                    <a href="post3.html">
+                        <img class="carousel-image" src="https://s41.ax1x.com/2025/12/07/pZnFlYF.md.png" alt="文章封面3">
+                        <div class="carousel-caption">
+                            <h3 class="carousel-title">四季的花</h3>
+                            <p class="carousel-excerpt">春有百花秋有月，夏有凉风冬有雪。四季更替，花儿也随之绽放，每一季都有独特的花卉装点我们的生活。</p>
+                        </div>
+                    </a>
+                </div>
+                
                 <!-- 轮播控制按钮 -->
                 <div class="carousel-controls">
                     <button class="carousel-btn prev-btn">❮</button>
@@ -775,6 +786,7 @@
                 <div class="carousel-indicators">
                     <div class="indicator active" data-index="0"></div>
                     <div class="indicator" data-index="1"></div>
+                    <div class="indicator" data-index="2"></div>
                 </div>
             </div>
         </section>
@@ -837,6 +849,36 @@
                     </div>
                 </a>
             </article>
+            
+            <!-- 文章卡片3 - 新增四季的花 -->
+            <article class="post-card">
+                <a href="post3.html">
+                    <div class="post-media">
+                        <img class="post-image" src="https://s41.ax1x.com/2025/12/07/pZnFlYF.md.png" alt="文章封面3">
+                    </div>
+                    
+                    <div class="post-content">
+                        <span class="post-tag">自然</span>
+                        <span class="post-tag">生活</span>
+                        <span class="post-tag">随笔</span>
+                        
+                        <h2 class="post-title">四季的花</h2>
+                        
+                        <div class="post-excerpt">
+                            春有百花秋有月，夏有凉风冬有雪。四季更替，花儿也随之绽放，每一季都有独特的花卉装点我们的生活。
+                        </div>
+                    </div>
+                    
+                    <div class="post-footer">
+                        <span class="post-more">阅读更多</span>
+                        
+                        <div class="post-author">
+                            <!-- 这里保持原来的作者头像 -->
+                            <img class="author-image" src="https://s41.ax1x.com/2025/12/06/pZmaGuR.png" alt="zhr">
+                        </div>
+                    </div>
+                </a>
+            </article>
         </div>
     </main>
 
@@ -877,6 +919,15 @@
                 date: "2023-10-10",
                 link: "post2.html",
                 image: "https://s41.ax1x.com/2025/12/06/pZmROmT.jpg"
+            },
+            {
+                id: 3,
+                title: "四季的花",
+                excerpt: "春有百花秋有月，夏有凉风冬有雪。四季更替，花儿也随之绽放，每一季都有独特的花卉装点我们的生活。",
+                tags: ["自然", "生活", "随笔"],
+                date: "2023-10-05",
+                link: "post3.html",
+                image: "https://s41.ax1x.com/2025/12/07/pZnFlYF.md.png"
             }
         ];
         
@@ -1028,7 +1079,7 @@
                         <div class="no-results">
                             <div class="no-results-icon">🔍</div>
                             <h3 class="no-results-title">输入关键词搜索文章</h3>
-                            <p class="no-results-text">尝试搜索"GitHub"、"博客"、"生活"等关键词</p>
+                            <p class="no-results-text">尝试搜索"GitHub"、"博客"、"生活"、"四季"等关键词</p>
                         </div>
                     `;
                     return;
