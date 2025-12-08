@@ -306,7 +306,7 @@
             font-size: 0.95rem;
         }
         
-        /* 轮播图样式 */
+        /* 轮播图样式 - 重点修复 */
         .carousel-section {
             margin-bottom: 60px;
         }
@@ -331,10 +331,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            pointer-events: none; /* 非活动幻灯片不响应点击 */
         }
         
         .carousel-slide.active {
             opacity: 1;
+            pointer-events: auto; /* 只有活动幻灯片响应点击 */
+            z-index: 1;
         }
         
         .carousel-slide a {
@@ -342,6 +345,7 @@
             width: 100%;
             height: 100%;
             position: relative;
+            cursor: pointer;
         }
         
         .carousel-image {
@@ -404,6 +408,7 @@
             color: white;
             font-size: 1.5rem;
             transition: all 0.3s;
+            z-index: 10;
         }
         
         .carousel-btn:hover {
@@ -429,6 +434,7 @@
             background: rgba(255, 255, 255, 0.5);
             cursor: pointer;
             transition: all 0.3s;
+            z-index: 10;
         }
         
         .indicator.active {
@@ -745,7 +751,7 @@
             <div class="carousel-container">
                 <!-- 轮播项目1 - 确保链接正确 -->
                 <div class="carousel-slide active" data-index="0">
-                    <a href="post.html" id="carousel-link-1">
+                    <a href="post.html" class="carousel-link" data-target="post.html">
                         <img class="carousel-image" src="https://images.unsplash.com/photo-1598960087461-556c5a1f864a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200" alt="文章封面1">
                         <div class="carousel-caption">
                             <h3 class="carousel-title">使用GitHub Pages搭建个人博客</h3>
@@ -756,7 +762,7 @@
                 
                 <!-- 轮播项目2 -->
                 <div class="carousel-slide" data-index="1">
-                    <a href="post2.html" id="carousel-link-2">
+                    <a href="post2.html" class="carousel-link" data-target="post2.html">
                         <img class="carousel-image" src="https://s41.ax1x.com/2025/12/06/pZmROmT.jpg" alt="文章封面2">
                         <div class="carousel-caption">
                             <h3 class="carousel-title">走出书本，对生活更有体会</h3>
@@ -767,7 +773,7 @@
                 
                 <!-- 轮播项目3 -->
                 <div class="carousel-slide" data-index="2">
-                    <a href="post3.html" id="carousel-link-3">
+                    <a href="post3.html" class="carousel-link" data-target="post3.html">
                         <img class="carousel-image" src="https://s41.ax1x.com/2025/12/07/pZnFlYF.md.png" alt="文章封面3">
                         <div class="carousel-caption">
                             <h3 class="carousel-title">四季的花</h3>
@@ -938,15 +944,49 @@
             const prevBtn = document.querySelector('.prev-btn');
             const nextBtn = document.querySelector('.next-btn');
             const carouselContainer = document.querySelector('.carousel-container');
+            const carouselLinks = document.querySelectorAll('.carousel-link');
             
             let currentIndex = 0;
             let slideInterval;
             const slideDuration = 5000; // 5秒自动切换
             
+            // 修复链接点击问题
+            function fixCarouselLinks() {
+                // 移除所有链接的事件监听器，然后重新添加
+                carouselLinks.forEach(link => {
+                    // 克隆并替换链接以清除所有事件监听器
+                    const newLink = link.cloneNode(true);
+                    link.parentNode.replaceChild(newLink, link);
+                });
+                
+                // 重新获取链接元素
+                const newLinks = document.querySelectorAll('.carousel-link');
+                
+                // 为每个链接添加点击事件
+                newLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.stopPropagation(); // 阻止事件冒泡
+                        const target = this.getAttribute('data-target') || this.getAttribute('href');
+                        console.log('轮播图点击，目标链接:', target);
+                        
+                        // 确保只有当前活动的幻灯片链接有效
+                        const slide = this.closest('.carousel-slide');
+                        if (slide.classList.contains('active')) {
+                            window.location.href = target;
+                        } else {
+                            e.preventDefault(); // 阻止非活动幻灯片的链接
+                        }
+                    });
+                });
+            }
+            
             // 初始化轮播
             function initCarousel() {
                 // 设置初始状态
                 updateSlide();
+                
+                // 修复链接点击问题
+                fixCarouselLinks();
                 
                 // 开始自动轮播
                 startAutoSlide();
@@ -991,15 +1031,6 @@
                         resetAutoSlide();
                     }
                 });
-                
-                // 确保轮播图链接正常工作
-                const carouselLinks = document.querySelectorAll('.carousel-slide a');
-                carouselLinks.forEach(link => {
-                    link.addEventListener('click', function(e) {
-                        console.log('轮播图点击：', this.href);
-                        // 确保链接正常工作
-                    });
-                });
             }
             
             // 更新轮播显示
@@ -1017,6 +1048,9 @@
                     indicator.classList.remove('active');
                 });
                 indicators[currentIndex].classList.add('active');
+                
+                // 修复链接点击问题
+                fixCarouselLinks();
             }
             
             // 下一张幻灯片
@@ -1200,19 +1234,14 @@
                     border-radius: 2px;
                     font-weight: 500;
                 }
-                
-                /* 确保轮播图链接可点击 */
-                .carousel-slide a {
-                    cursor: pointer;
-                }
             `;
             document.head.appendChild(style);
             
             // 调试：检查轮播图链接
             console.log('轮播图链接检查:');
-            console.log('链接1:', document.querySelector('#carousel-link-1')?.href);
-            console.log('链接2:', document.querySelector('#carousel-link-2')?.href);
-            console.log('链接3:', document.querySelector('#carousel-link-3')?.href);
+            console.log('轮播1链接:', document.querySelector('.carousel-slide[data-index="0"] a')?.href);
+            console.log('轮播2链接:', document.querySelector('.carousel-slide[data-index="1"] a')?.href);
+            console.log('轮播3链接:', document.querySelector('.carousel-slide[data-index="2"] a')?.href);
         });
     </script>
 </body>
