@@ -66,21 +66,13 @@
           opacity: 0.9;
         }
         
-        .content .title-line {
-          font-weight: 700;
-          font-size: 1.4rem;
-          opacity: 0.9;
-          margin-bottom: 8px;
-        }
-        
-        .content .copyright-line {
+        .content p {
           font-weight: 300;
-          font-size: 0.9rem;
+          font-size: 1rem;
           opacity: 0.7;
           margin-bottom: 40px;
-          max-width: 700px;
+          max-width: 500px;
           padding: 0 20px;
-          line-height: 1.4;
         }
         
         .content a {
@@ -120,18 +112,6 @@
           transform: translate(-10%, -10%);
         }
         
-        /* 加载状态样式 */
-        .loading {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          color: #CDD4DE;
-          font-size: 1.2rem;
-          opacity: 0.7;
-          z-index: 3;
-        }
-        
         /* 响应式调整 */
         @media (max-width: 768px) {
           .content {
@@ -146,14 +126,9 @@
             font-size: 2rem;
           }
           
-          .content .title-line {
-            font-size: 1.2rem;
-          }
-          
-          .content .copyright-line {
-            font-size: 0.8rem;
+          .content p {
+            font-size: 0.9rem;
             margin-bottom: 35px;
-            max-width: 500px;
           }
           
           header {
@@ -175,15 +150,6 @@
             font-size: 1.8rem;
           }
           
-          .content .title-line {
-            font-size: 1rem;
-          }
-          
-          .content .copyright-line {
-            font-size: 0.75rem;
-            padding: 0 15px;
-          }
-          
           .content a {
             padding: 10px 22px;
             font-size: 0.8rem;
@@ -202,98 +168,25 @@
         <div class="content">
             <h1>404</h1>
             <h2>页面未找到</h2>
-            <div class="title-line" id="title-line">正在加载每日壁纸信息...</div>
-            <div class="copyright-line" id="copyright-line"></div>
+            <p>MAKE IT POSSIBLE</p>
             <a href="https://zhr-0731.github.io" id="home-button">返回首页</a>
         </div>
         
-        <!-- 背景图片 - 使用Bing每日壁纸API -->
-        <img src="" alt="Bing每日壁纸" id="bg-image" />
-        
-        <!-- 加载状态 -->
-        <div class="loading" id="loading">加载中...</div>
+        <!-- 背景图片 - 使用您提供的URL -->
+        <img src="https://bing.img.run/uhd.php" alt="404背景图" id="bg-image" />
     </div>
 
     <script>
-        // 获取页面元素
-        const bgImage = document.getElementById('bg-image');
-        const titleLine = document.getElementById('title-line');
-        const copyrightLine = document.getElementById('copyright-line');
-        const loading = document.getElementById('loading');
-        
-        // 鼠标跟随动画变量
+        // 解决图片黑边问题的鼠标跟随动画
         let lFollowX = 0, lFollowY = 0;
         let x = 0, y = 0;
-        let friction = 1 / 28;
-        let isAnimating = false;
-        
-        // 从Bing API获取每日壁纸
-        async function fetchBingWallpaper() {
-            try {
-                const apiUrl = 'https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN';
-                const response = await fetch(apiUrl);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                if (data.images && data.images.length > 0) {
-                    const image = data.images[0];
-                    
-                    // 构建完整的图片URL
-                    const baseUrl = 'https://cn.bing.com';
-                    const imageUrl = baseUrl + image.url;
-                    
-                    // 更新页面内容
-                    titleLine.textContent = image.title || 'Bing每日壁纸';
-                    copyrightLine.textContent = image.copyright || '';
-                    
-                    // 设置背景图片
-                    return new Promise((resolve, reject) => {
-                        bgImage.onload = () => {
-                            loading.style.display = 'none';
-                            startAnimation();
-                            resolve();
-                        };
-                        bgImage.onerror = () => {
-                            console.error('图片加载失败');
-                            loading.textContent = '图片加载失败，使用默认背景';
-                            setTimeout(() => {
-                                loading.style.display = 'none';
-                                startAnimation();
-                            }, 2000);
-                            resolve();
-                        };
-                        bgImage.src = imageUrl;
-                    });
-                } else {
-                    throw new Error('API返回数据格式错误');
-                }
-            } catch (error) {
-                console.error('获取壁纸失败:', error);
-                
-                // 使用备用图片和默认文本
-                titleLine.textContent = '探索未知的世界';
-                copyrightLine.textContent = '发现每一天的新奇与美好';
-                bgImage.src = 'https://bing.img.run/uhd.php';
-                loading.style.display = 'none';
-                startAnimation();
-            }
-        }
-        
-        // 启动鼠标跟随动画
-        function startAnimation() {
-            if (isAnimating) return;
-            isAnimating = true;
-            animate();
-        }
+        const friction = 1 / 28;
+        const img = document.getElementById('bg-image');
         
         // 计算图片可安全移动的边界（基于放大后的尺寸）
         function calculateMovementBounds() {
-            const imgWidth = bgImage.offsetWidth;      // 图片实际宽度（屏幕宽度的120%）
-            const imgHeight = bgImage.offsetHeight;    // 图片实际高度（屏幕高度的120%）
+            const imgWidth = img.offsetWidth;      // 图片实际宽度（屏幕宽度的120%）
+            const imgHeight = img.offsetHeight;    // 图片实际高度（屏幕高度的120%）
             const screenWidth = window.innerWidth;
             const screenHeight = window.innerHeight;
             
@@ -316,7 +209,7 @@
             y = Math.max(-bounds.maxY, Math.min(bounds.maxY, y));
             
             // 应用变换：初始偏移(-10%, -10%) + 鼠标移动偏移
-            bgImage.style.transform = `translate(calc(-10% + ${x}px), calc(-10% + ${y}px))`;
+            img.style.transform = `translate(calc(-10% + ${x}px), calc(-10% + ${y}px))`;
             
             window.requestAnimationFrame(animate);
         }
@@ -343,21 +236,17 @@
             y = Math.max(-bounds.maxY, Math.min(bounds.maxY, y));
         });
         
-        // 按钮悬停时降低动画灵敏度，提升体验
+        // 按钮悬停时暂停动画，提升体验
         const homeButton = document.getElementById('home-button');
         homeButton.addEventListener('mouseenter', function() {
-            friction = 1 / 50; // 降低跟随速度
+            frictionTemp = friction;
         });
         
-        homeButton.addEventListener('mouseleave', function() {
-            friction = 1 / 28; // 恢复跟随速度
-        });
+        // 启动动画
+        window.requestAnimationFrame(animate);
         
-        // 页面加载完成后获取壁纸
+        // 页面加载后轻微随机初始化，使页面更有生气
         window.addEventListener('load', function() {
-            fetchBingWallpaper();
-            
-            // 页面加载后轻微随机初始化，使页面更有生气
             setTimeout(() => {
                 lFollowX = (Math.random() - 0.5) * 20;
                 lFollowY = (Math.random() - 0.5) * 15;
