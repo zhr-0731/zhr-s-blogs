@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zhr的博客 - 搜索引擎</title>
+    <meta name="description" content="zhr博客搜索引擎">
+    
+    <!-- 网页图标 -->
+    <link rel="icon" href="https://s41.ax1x.com/2025/12/07/pZnSiid.png" type="image/png">
+    <link rel="shortcut icon" href="https://s41.ax1x.com/2025/12/07/pZnSiid.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://s41.ax1x.com/2025/12/07/pZnSiid.png">
+    
+    <style>
+        /* 全局样式 */
+        :root {
+            --ghost-accent-color: #59c090;
+            --text-color: #333;
+            --bg-color: #fff;
+            --light-gray: #f5f5f5;
+            --border-color: #eaeaea;
+            --font-serif: 'Noto Serif SC', serif;
+            --font-sans: 'Noto Sans SC', sans-serif;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            color: var(--ghost-accent-color);
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部导航 */
+        header {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin-left: 25px;
+        }
+        
+        nav a {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: var(--light-gray);
+        }
+        
+        /* 搜索引擎主容器 */
+        .search-engine-container {
+            padding: 60px 0;
+            flex: 1;
+        }
+        
+        .search-engine-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .search-engine-title {
+            font-size: 2.5rem;
+            font-family: var(--font-serif);
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        
+        .search-engine-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-box-container {
+            max-width: 800px;
+            margin: 0 auto 60px;
+            position: relative;
+        }
+        
+        .search-engine-form {
+            display: flex;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+            border-radius: 50px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .search-engine-form:focus-within {
+            border-color: var(--ghost-accent-color);
+        }
+        
+        .search-engine-input {
+            flex: 1;
+            padding: 20px 30px;
+            font-size: 1.2rem;
+            border: none;
+            outline: none;
+            font-family: var(--font-sans);
+        }
+        
+        .search-engine-button {
+            background: var(--ghost-accent-color);
+            color: white;
+            border: none;
+            padding: 0 40px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .search-engine-button:hover {
+            background: #4aa97a;
+        }
+        
+        .search-examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .search-example {
+            background: var(--light-gray);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .search-example:hover {
+            background: var(--ghost-accent-color);
+            color: white;
+        }
+        
+        /* 搜索结果 */
+        .search-results-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .search-stats {
+            font-size: 0.95rem;
+            color: #888;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .search-result-item {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 12px;
+            background: white;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+        
+        .search-result-item:hover {
+            border-color: var(--ghost-accent-color);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+        }
+        
+        .result-url {
+            color: #006621;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .result-favicon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+        
+        .result-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-family: var(--font-serif);
+            line-height: 1.3;
+            color: #1a0dab;
+        }
+        
+        .result-title:hover {
+            text-decoration: underline;
+        }
+        
+        .result-excerpt {
+            color: #545454;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .result-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .result-tag {
+            display: inline-block;
+            background: rgba(89, 192, 144, 0.1);
+            color: var(--ghost-accent-color);
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+        
+        .result-date {
+            color: #888;
+            font-size: 0.85rem;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+        
+        .no-results-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .no-results-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .no-results-text {
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .suggestions {
+            margin-top: 30px;
+            padding: 30px;
+            background: var(--light-gray);
+            border-radius: 12px;
+        }
+        
+        .suggestions-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .suggestions-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .suggestion-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid var(--border-color);
+        }
+        
+        .suggestion-item:hover {
+            border-color: var(--ghost-accent-color);
+            transform: translateY(-2px);
+        }
+        
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .pagination-button {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+        
+        .pagination-button:hover:not(:disabled) {
+            border-color: var(--ghost-accent-color);
+            color: var(--ghost-accent-color);
+        }
+        
+        .pagination-button.active {
+            background: var(--ghost-accent-color);
+            color: white;
+            border-color: var(--ghost-accent-color);
+        }
+        
+        .pagination-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-info {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        /* URL显示区域 */
+        .url-display {
+            background: var(--light-gray);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        
+        .url-display code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* 页脚 */
+        footer {
+            background: var(--light-gray);
+            padding: 50px 0;
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .copyright {
+            color: #888;
+        }
+        
+        .footer-nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        .footer-nav li {
+            margin-left: 20px;
+        }
+        
+        .powered-by {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            nav ul {
+                margin-top: 15px;
+                flex-wrap: wrap;
+            }
+            
+            nav li {
+                margin: 5px 15px 5px 0;
+            }
+            
+            .search-engine-title {
+                font-size: 2rem;
+            }
+            
+            .search-engine-input {
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+            
+            .search-engine-button {
+                padding: 0 25px;
+                font-size: 1rem;
+            }
+            
+            .search-result-item {
+                padding: 20px;
+            }
+            
+            .result-title {
+                font-size: 1.2rem;
+            }
+            
+            .suggestions-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-nav ul {
+                margin: 20px 0;
+                justify-content: center;
+            }
+            
+            .footer-nav li {
+                margin: 0 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .search-engine-title {
+                font-size: 1.7rem;
+            }
+            
+            .search-engine-form {
+                flex-direction: column;
+                border-radius: 12px;
+            }
+            
+            .search-engine-input {
+                padding: 15px;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .search-engine-button {
+                padding: 15px;
+                width: 100%;
+            }
+            
+            .search-examples {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .pagination {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header>
+        <div class="container">
+            <div class="header-inner">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="https://s41.ax1x.com/2025/12/06/pZmaGuR.png" alt="zhr">
+                        <span class="logo-text">zhr的博客</span>
+                    </a>
+                </div>
+                
+                <nav>
+                    <ul>
+                        <li><a href="index.html">文章|Article</a></li>
+                        <li><a href="https://zhr-0731.github.io/zhr-s-videos">视频|Video</a></li>
+                        <li><a href="search.html">搜索|Search</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="header-actions">
+                    <a href="search.html" class="search-btn">🔍</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 搜索引擎主内容 -->
+    <main class="search-engine-container container">
+        <div class="search-engine-header">
+            <h1 class="search-engine-title">zhr博客搜索引擎</h1>
+            <p class="search-engine-subtitle">搜索博客中的所有文章，支持通过URL参数直接搜索，例如：search.html?q=关键词</p>
+        </div>
+        
+        <div class="search-box-container">
+            <form class="search-engine-form" id="searchForm">
+                <input 
+                    type="text" 
+                    class="search-engine-input" 
+                    id="searchInput" 
+                    name="q"
+                    placeholder="输入关键词搜索文章..." 
+                    autocomplete="off"
+                    value=""
+                >
+                <button type="submit" class="search-engine-button">搜索</button>
+            </form>
+            
+            <div class="search-examples">
+                <div class="search-example" data-search="GitHub">GitHub</div>
+                <div class="search-example" data-search="博客">博客</div>
+                <div class="search-example" data-search="生活">生活</div>
+                <div class="search-example" data-search="重庆">重庆</div>
+                <div class="search-example" data-search="四季">四季</div>
+            </div>
+        </div>
+        
+        <!-- URL显示区域 -->
+        <div class="url-display" id="urlDisplay">
+            <strong>当前搜索URL:</strong> <code id="currentUrl"></code>
+            <br><br>
+            <strong>使用方法:</strong> 将URL复制分享给其他人，他们打开后会自动搜索相同关键词
+        </div>
+        
+        <!-- 搜索结果 -->
+        <div class="search-results-container" id="searchResultsContainer">
+            <div class="search-stats" id="searchStats">
+                输入关键词开始搜索
+            </div>
+            
+            <div id="searchResults">
+                <!-- 搜索结果将动态插入这里 -->
+                <div class="no-results">
+                    <div class="no-results-icon">🔍</div>
+                    <h3 class="no-results-title">输入关键词搜索文章</h3>
+                    <p class="no-results-text">尝试搜索"GitHub"、"博客"、"生活"、"四季"、"重庆"等关键词，或者使用上面的示例进行搜索</p>
+                </div>
+            </div>
+            
+            <!-- 搜索建议 -->
+            <div class="suggestions" id="suggestionsContainer" style="display: none;">
+                <h3 class="suggestions-title">您是不是想搜索：</h3>
+                <div class="suggestions-list" id="suggestionsList">
+                    <!-- 建议将动态插入这里 -->
+                </div>
+            </div>
+            
+            <!-- 分页 -->
+            <div class="pagination" id="paginationContainer" style="display: none;">
+                <button class="pagination-button" id="prevPageBtn" disabled>上一页</button>
+                <div class="pagination-info" id="paginationInfo">第 <span id="currentPage">1</span> 页，共 <span id="totalPages">1</span> 页</div>
+                <button class="pagination-button" id="nextPageBtn" disabled>下一页</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-inner">
+                <nav class="footer-nav">
+                    <ul>
+                        <li><a href="https://bgithub.xyz/zhr-0731" target="_blank">GitHub</a></li>
+                        <li><a href="search.html">搜索引擎</a></li>
+                    </ul
