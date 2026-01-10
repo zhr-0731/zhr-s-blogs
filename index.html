@@ -1121,46 +1121,6 @@
     </footer>
 
     <script>
-        // 文章数据（用于搜索功能）
-        const articles = [
-            {
-                id: 1,
-                title: "使用GitHub Pages搭建个人博客",
-                excerpt: "详细讲解如何使用GitHub Pages免费部署个人博客网站，包含HTML、CSS和GitHub配置...",
-                tags: ["技术"],
-                date: "2023-10-15",
-                link: "post/post.html",
-                image: "https://images.unsplash.com/photo-1598960087461-556c5a1f864a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=960"
-            },
-            {
-                id: 2,
-                title: "走出书本，对生活更有体会",
-                excerpt: "书本中的世界固然是精彩的，但书本外的世界会更丰富。读过书后再走出书本，对生活会有更深的体会。",
-                tags: ["生活", "感悟"],
-                date: "2023-10-10",
-                link: "post/post2.html",
-                image: "https://s41.ax1x.com/2025/12/06/pZmROmT.jpg"
-            },
-            {
-                id: 3,
-                title: "四季的花",
-                excerpt: "春有百花秋有月，夏有凉风冬有雪。四季更替，花儿也随之绽放，每一季都有独特的花卉装点我们的生活。",
-                tags: ["自然", "生活", "随笔"],
-                date: "2023-10-05",
-                link: "post/post3.html",
-                image: "https://s41.ax1x.com/2025/12/07/pZnFlYF.md.png"
-            },
-            {
-                id: 4,
-                title: "去了一趟重庆 #1",
-                excerpt: "2月，我终于有了机会，和同学去这个充满惊喜和美食的城市看看。",
-                tags: ["旅行", "城市"],
-                date: "2025-12-14",
-                link: "post/post4.html",
-                image: "https://s41.ax1x.com/2025/12/14/pZMRq76.jpg"
-            }
-        ];
-        
         // 轮播功能脚本
         document.addEventListener('DOMContentLoaded', function() {
             // 轮播功能
@@ -1303,76 +1263,6 @@
             const searchInput = document.getElementById('searchInput');
             const searchResults = document.getElementById('searchResults');
             
-            // 高亮关键词函数
-            function highlightText(text, keyword) {
-                if (!keyword.trim()) return text;
-                
-                const regex = new RegExp(`(${keyword})`, 'gi');
-                return text.replace(regex, '<mark class="highlight">$1</mark>');
-            }
-            
-            // 搜索文章函数
-            function searchArticles(keyword) {
-                if (!keyword.trim()) {
-                    // 显示初始状态
-                    searchResults.innerHTML = `
-                        <div class="no-results">
-                            <div class="no-results-icon">🔍</div>
-                            <h3 class="no-results-title">输入关键词搜索文章</h3>
-                            <p class="no-results-text">尝试搜索"GitHub"、"博客"、"生活"、"四季"、"重庆"等关键词</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                const lowerKeyword = keyword.toLowerCase();
-                const results = articles.filter(article => {
-                    return (
-                        article.title.toLowerCase().includes(lowerKeyword) ||
-                        article.excerpt.toLowerCase().includes(lowerKeyword) ||
-                        article.tags.some(tag => tag.toLowerCase().includes(lowerKeyword))
-                    );
-                });
-                
-                if (results.length === 0) {
-                    searchResults.innerHTML = `
-                        <div class="no-results">
-                            <div class="no-results-icon">🔎</div>
-                            <h3 class="no-results-title">未找到相关文章</h3>
-                            <p class="no-results-text">尝试使用其他关键词搜索</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                // 显示搜索结果
-                let resultsHTML = '';
-                results.forEach(article => {
-                    const highlightedTitle = highlightText(article.title, keyword);
-                    const highlightedExcerpt = highlightText(article.excerpt, keyword);
-                    
-                    resultsHTML += `
-                        <div class="search-result-item" onclick="window.location.href='${article.link}'">
-                            <h3 class="result-title">${highlightedTitle}</h3>
-                            <p class="result-excerpt">${highlightedExcerpt}</p>
-                            <div class="result-meta">
-                                <div class="result-tags">
-                                    ${article.tags.map(tag => `<span class="result-tag">${tag}</span>`).join(' ')}
-                                </div>
-                                <div class="result-date">${article.date}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                searchResults.innerHTML = resultsHTML;
-            }
-            
-            // 搜索框事件监听
-            searchInput.addEventListener('input', function() {
-                searchArticles(this.value);
-            });
-            
             // 显示搜索模态框
             searchToggleBtn.addEventListener('click', function() {
                 searchContainer.classList.add('active');
@@ -1385,20 +1275,13 @@
             
             // 关闭搜索模态框
             closeSearchBtn.addEventListener('click', function() {
-                searchContainer.classList.remove('active');
-                searchToggleBtn.classList.remove('active');
-                // 清空搜索框
-                searchInput.value = '';
-                searchArticles('');
+                closeSearchModal();
             });
             
             // ESC键关闭搜索
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && searchContainer.classList.contains('active')) {
-                    searchContainer.classList.remove('active');
-                    searchToggleBtn.classList.remove('active');
-                    searchInput.value = '';
-                    searchArticles('');
+                    closeSearchModal();
                 }
                 
                 // Ctrl+K 打开搜索（Mac上是Cmd+K）
@@ -1410,29 +1293,45 @@
                         searchInput.focus();
                     }, 100);
                 }
+                
+                // 回车键搜索
+                if (e.key === 'Enter' && searchContainer.classList.contains('active') && document.activeElement === searchInput) {
+                    performSearch();
+                }
             });
             
             // 点击模态框背景关闭搜索
             searchContainer.addEventListener('click', function(e) {
                 if (e.target === this) {
-                    searchContainer.classList.remove('active');
-                    searchToggleBtn.classList.remove('active');
-                    searchInput.value = '';
-                    searchArticles('');
+                    closeSearchModal();
                 }
             });
             
-            // 添加高亮样式
-            const style = document.createElement('style');
-            style.textContent = `
-                .highlight {
-                    background-color: rgba(89, 192, 144, 0.2);
-                    padding: 0 2px;
-                    border-radius: 2px;
-                    font-weight: 500;
+            // 搜索图标点击事件
+            document.querySelector('.search-icon').addEventListener('click', function() {
+                if (searchInput.value.trim()) {
+                    performSearch();
+                } else {
+                    searchInput.focus();
                 }
-            `;
-            document.head.appendChild(style);
+            });
+            
+            // 执行搜索函数
+            function performSearch() {
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    // 跳转到搜索页面
+                    const encodedTerm = encodeURIComponent(searchTerm);
+                    window.location.href = `https://zhr-0731.github.io/search.html?q=${encodedTerm}`;
+                }
+            }
+            
+            // 关闭搜索模态框函数
+            function closeSearchModal() {
+                searchContainer.classList.remove('active');
+                searchToggleBtn.classList.remove('active');
+                searchInput.value = '';
+            }
             
             // 音乐播放器功能
             const backgroundMusic = document.getElementById('backgroundMusic');
@@ -1451,8 +1350,6 @@
                         console.log('自动播放被阻止，等待用户交互:', error);
                         // 移除播放状态
                         playPauseBtnCompact.classList.remove('playing');
-                        // 显示提示（如果需要）
-                        // document.getElementById('musicTitleCompact').textContent = '点击播放';
                     });
                 }
             }
