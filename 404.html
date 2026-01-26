@@ -66,7 +66,7 @@
           opacity: 0.9;
         }
         
-        /* 新闻轮播容器 */
+        /* 新闻轮播容器 - 修复只显示一条的问题 */
         .news-container {
           position: relative;
           height: 24px; /* 单行高度 */
@@ -77,30 +77,43 @@
         }
         
         .news-slider {
-          position: absolute;
-          bottom: 0;
-          left: 0;
+          position: relative;
           width: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          height: 100%;
         }
         
         .news-item {
-          height: 24px;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
           line-height: 24px;
           text-align: center;
           font-weight: 300;
           font-size: 1rem;
-          opacity: 0.7;
+          opacity: 0;
           color: #CDD4DE;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          width: 100%;
           padding: 0 20px;
           box-sizing: border-box;
+          transition: opacity 0.5s ease, transform 0.5s ease;
+          transform: translateY(20px);
+          cursor: pointer;
+        }
+        
+        .news-item.active {
+          opacity: 0.7;
+          transform: translateY(0);
+          z-index: 2;
+        }
+        
+        .news-item.next {
+          opacity: 0;
+          transform: translateY(20px);
+          z-index: 1;
         }
         
         .content a {
@@ -117,6 +130,8 @@
           cursor: pointer;
           transition: all 0.3s ease;
           letter-spacing: 1px;
+          z-index: 3;
+          position: relative;
         }
         
         .content a:hover {
@@ -282,12 +297,6 @@
             y = Math.max(-bounds.maxY, Math.min(bounds.maxY, y));
         });
         
-        // 按钮悬停时暂停动画，提升体验
-        const homeButton = document.getElementById('home-button');
-        homeButton.addEventListener('mouseenter', function() {
-            frictionTemp = friction;
-        });
-        
         // 启动动画
         window.requestAnimationFrame(animate);
         
@@ -305,7 +314,7 @@
             const apiUrl = 'https://apiserver.alcex.cn/daily-hot/thepaper';
             let newsItems = [];
             let currentIndex = 0;
-            let isTransitioning = false;
+            let newsInterval;
             
             // 从API获取新闻数据
             async function fetchNews() {
@@ -314,21 +323,25 @@
                     const data = await response.json();
                     
                     if (data.code === 200 && data.data && data.data.length > 0) {
-                        newsItems = data.data.map(item => item.title);
+                        // 保存标题和链接
+                        newsItems = data.data.map(item => ({
+                            title: item.title,
+                            url: item.url
+                        }));
                     } else {
                         // 如果API请求失败，使用默认新闻
                         newsItems = [
-                            "欢迎访问我的GitHub主页",
-                            "页面未找到，请检查URL是否正确",
-                            "您可以点击下方按钮返回首页"
+                            {title: "欢迎访问我的GitHub主页", url: "https://zhr-0731.github.io"},
+                            {title: "页面未找到，请检查URL是否正确", url: "https://zhr-0731.github.io"},
+                            {title: "您可以点击下方按钮返回首页", url: "https://zhr-0731.github.io"}
                         ];
                     }
                 } catch (error) {
                     console.error('获取新闻失败:', error);
                     newsItems = [
-                        "无法获取实时新闻",
-                        "请检查网络连接",
-                        "点击返回首页按钮继续浏览"
+                        {title: "无法获取实时新闻", url: "https://zhr-0731.github.io"},
+                        {title: "请检查网络连接", url: "https://zhr-0731.github.io"},
+                        {title: "点击返回首页按钮继续浏览", url: "https://zhr-0731.github.io"}
                     ];
                 }
                 
@@ -344,67 +357,135 @@
                 newsSlider.innerHTML = '';
                 
                 // 创建新闻项
-                newsItems.forEach((title, index) => {
+                newsItems.forEach((news, index) => {
                     const newsItem = document.createElement('div');
                     newsItem.className = 'news-item';
-                    newsItem.textContent = title;
+                    newsItem.textContent = news.title;
+                    newsItem.setAttribute('data-url', news.url);
+                    newsItem.setAttribute('data-index', index);
+                    
+                    // 添加点击事件
+                    newsItem.addEventListener('click', function() {
+                        const url = this.getAttribute('data-url');
+                        if (url) {
+                            window.open(url, '_blank');
+                        }
+                    });
+                    
+                    // 添加悬停效果
+                    newsItem.addEventListener('mouseenter', function() {
+                        this.style.opacity = '1';
+                        this.style.cursor = 'pointer';
+                    });
+                    
+                    newsItem.addEventListener('mouseleave', function() {
+                        if (!this.classList.contains('active')) {
+                            this.style.opacity = '0';
+                        } else {
+                            this.style.opacity = '0.7';
+                        }
+                    });
+                    
                     newsSlider.appendChild(newsItem);
                 });
                 
-                // 设置初始位置（显示第一个新闻）
-                updateSliderPosition();
+                // 设置初始活动项
+                setActiveNews(0);
                 
                 // 开始轮播
                 startNewsRotation();
             }
             
-            // 更新轮播位置
-            function updateSliderPosition() {
-                if (newsItems.length === 0) return;
+            // 设置活动新闻
+            function setActiveNews(index) {
+                // 移除所有活动类
+                const allItems = document.querySelectorAll('.news-item');
+                allItems.forEach(item => {
+                    item.classList.remove('active', 'next');
+                });
                 
-                // 计算需要移动的距离（每个新闻项24px）
-                const offset = currentIndex * 24; // 24px是每个新闻项的高度
-                newsSlider.style.transform = `translateY(-${offset}px)`;
+                // 设置当前活动项
+                if (allItems[index]) {
+                    allItems[index].classList.add('active');
+                }
+                
+                // 设置下一项（用于过渡效果）
+                const nextIndex = (index + 1) % newsItems.length;
+                if (allItems[nextIndex]) {
+                    allItems[nextIndex].classList.add('next');
+                }
+            }
+            
+            // 切换到下一个新闻
+            function nextNews() {
+                // 移除当前活动项
+                const currentItem = document.querySelector('.news-item.active');
+                if (currentItem) {
+                    currentItem.classList.remove('active');
+                    currentItem.classList.add('next');
+                    currentItem.style.opacity = '0';
+                    currentItem.style.transform = 'translateY(-20px)';
+                }
+                
+                // 更新索引
+                currentIndex = (currentIndex + 1) % newsItems.length;
+                
+                // 设置新的活动项
+                const nextItem = document.querySelectorAll('.news-item')[currentIndex];
+                if (nextItem) {
+                    nextItem.classList.remove('next');
+                    nextItem.classList.add('active');
+                    nextItem.style.opacity = '0.7';
+                    nextItem.style.transform = 'translateY(0)';
+                }
+                
+                // 设置下一项（用于下次过渡）
+                const nextNextIndex = (currentIndex + 1) % newsItems.length;
+                const nextNextItem = document.querySelectorAll('.news-item')[nextNextIndex];
+                if (nextNextItem) {
+                    nextNextItem.classList.add('next');
+                    nextNextItem.style.opacity = '0';
+                    nextNextItem.style.transform = 'translateY(20px)';
+                }
             }
             
             // 开始轮播
             function startNewsRotation() {
                 if (newsItems.length <= 1) return;
                 
-                setInterval(() => {
-                    if (isTransitioning) return;
-                    
-                    isTransitioning = true;
-                    currentIndex++;
-                    
-                    // 如果到达最后一个，回到第一个
-                    if (currentIndex >= newsItems.length) {
-                        // 先快速重置到第一个（无动画）
-                        setTimeout(() => {
-                            currentIndex = 0;
-                            newsSlider.style.transition = 'none';
-                            updateSliderPosition();
-                            
-                            // 强制重排，确保无动画重置生效
-                            newsSlider.offsetHeight;
-                            
-                            // 恢复动画
-                            newsSlider.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-                            isTransitioning = false;
-                        }, 100);
-                    } else {
-                        updateSliderPosition();
-                    }
-                    
-                    // 重置过渡状态
-                    setTimeout(() => {
-                        isTransitioning = false;
-                    }, 800);
-                }, 5000); // 5秒切换一次
+                // 清除现有定时器
+                if (newsInterval) {
+                    clearInterval(newsInterval);
+                }
+                
+                // 设置新的定时器
+                newsInterval = setInterval(nextNews, 5000); // 5秒切换一次
             }
+            
+            // 停止轮播（当用户与新闻交互时）
+            function pauseNewsRotation() {
+                if (newsInterval) {
+                    clearInterval(newsInterval);
+                }
+            }
+            
+            // 恢复轮播
+            function resumeNewsRotation() {
+                if (newsInterval) {
+                    clearInterval(newsInterval);
+                }
+                newsInterval = setInterval(nextNews, 5000);
+            }
+            
+            // 当用户鼠标进入新闻区域时暂停轮播
+            newsSlider.addEventListener('mouseenter', pauseNewsRotation);
+            newsSlider.addEventListener('mouseleave', resumeNewsRotation);
             
             // 开始获取新闻
             fetchNews();
+            
+            // 定期刷新新闻数据（每10分钟）
+            setInterval(fetchNews, 10 * 60 * 1000);
         });
     </script>
 </body>
